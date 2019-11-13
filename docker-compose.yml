@@ -1,4 +1,5 @@
 # based on http://abiasforaction.net/apache-cassandra-cluster-docker/
+# there were some minor change and removal
 version: '3'
 services:
     # Configuration for our seed cassandra node. The node is call DC1N1
