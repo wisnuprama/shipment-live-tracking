@@ -11,9 +11,9 @@ WITH REPLICATION = {
     'class' : 'SimpleStrategy', 
     -- The total number of replicas for a keyspace across a Cassandra cluster is referred 
     -- to as the keyspace's replication factor. 
-    -- A replication factor of one means that there is only one copy of each row in the 
+    -- A replication factor of two means that there is only two copy of each row in the 
     -- Cassandra cluster. 
-    'replication_factor' : 1
+    'replication_factor' : 2
 };
 
 -- use universitydb as main keyspace
