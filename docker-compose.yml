@@ -2,19 +2,33 @@ version: '3'
 services:
 
     # APP
-    frontend:
-        container_name: frontend
+    bigdata-backend:
+        container_name: bigdata-backend
         build:
-            context: .
-            dockerfile: ./frontend/Dockerfile
-        volumes:
-        - '.:/app'
-        - '/app/node_modules'
+            context: ./backend
+            # dockerfile: ./backend/Dockerfile
         ports:
-        - '3000:3000'
+            - 5000:5000
+        volumes:
+            - ./backend:/app
         environment:
-        - NODE_ENV=development
-
+            - FLASK_ENV=development
+            - FLASK_APP=app.py
+            - FLASK_DEBUG=1
+    bigdata-frontend:
+        container_name: bigdata-frontend
+        build:
+            context: ./frontend
+            # dockerfile: ./frontend/Dockerfile
+        volumes:
+            - './frontend:/app'
+            - '/app/node_modules'
+        ports:
+            - '3000:3000'
+        environment:
+            - NODE_ENV=development
+        links:
+            - 'bigdata-backend:bigdata-backend'
 
     # CASSANDRA
     # Configuration for our seed cassandra node. The node is call DC1N1
