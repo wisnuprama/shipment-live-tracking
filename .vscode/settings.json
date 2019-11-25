@@ -1,3 +1,11 @@
 {
-    "python.pythonPath": "backend/env/bin/python"
+    "python.pythonPath": "backend/env/bin/python",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/node_modules": true
+    }
 }
