@@ -1,5 +1,6 @@
 {
     "python.pythonPath": "backend/env/bin/python",
+    "python.envFile": "${workspaceFolder}/.env",
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
