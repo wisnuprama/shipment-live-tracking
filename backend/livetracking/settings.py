@@ -15,7 +15,7 @@ DATABASE = {
     },
     'config': {
         'default_keyspace': 'livetracking',
-        'hosts': ['172.21.128.1',],
+        'hosts': ['172.21.128.3',],
         'retry_connect': True,
         'port': 9042
     }

@@ -3,7 +3,7 @@ import sys
 
 
 def main():
-    from livetracking import app
+    import livetracking.app
 
 if __name__ == '__main__':
     main()
