@@ -31,7 +31,7 @@ services:
         # Maps cassandra data to a local folder. This preserves data across
         # container restarts. Note a folder n1data get created locally
         volumes:
-            - ./n1data:/var/lib/cassandra
+            - ./data/n1data:/var/lib/cassandra
         # Docker constainer environment variable. We are using the
         # CASSANDRA_CLUSTER_NAME to name the cluster. This needs to be the same
         # across clusters. We are also declaring that DC1N1 is a seed node.
@@ -70,7 +70,7 @@ services:
         # Maps cassandra data to a local folder. This preserves data across
         # container restarts. Note a folder n1data get created locally
         volumes:
-            - ./n2data:/var/lib/cassandra
+            - ./data/n2data:/var/lib/cassandra
         # Docker constainer environment variable. We are using the
         # CASSANDRA_CLUSTER_NAME to name the cluster. This needs to be the same
         # across clusters. We are also declaring that DC1N1 is a seed node.
@@ -116,7 +116,7 @@ services:
     #     # Maps cassandra data to a local folder. This preserves data across
     #     # container restarts. Note a folder n1data get created locally
     #     volumes:
-    #         - ./n2data:/var/lib/cassandra
+    #         - ./data/n3data:/var/lib/cassandra
     #     # Docker constainer environment variable. We are using the
     #     # CASSANDRA_CLUSTER_NAME to name the cluster. This needs to be the same
     #     # across clusters. We are also declaring that DC1N1 is a seed node.

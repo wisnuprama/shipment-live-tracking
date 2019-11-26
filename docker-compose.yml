@@ -1,82 +1,82 @@
 version: '3'
 services:
 
+    # CASSANDRA
+    # Configuration for our seed cassandra node. The node is call DC1N1
+    # .i.e Node 1 in Data center 1.
+    DC1N1:
+        # Cassandra image for Cassandra version 3.11.5. This is pulled
+        # from the docker store.
+        image: cassandra:3.11.5
+        # In case this is the first time starting up cassandra we need to ensure
+        # that all nodes do not start up at the same time. Cassandra has a
+        # 2 minute rule i.e. 2 minutes between each node boot up. Booting up
+        # nodes simultaneously is a mistake. This only needs to happen the firt
+        # time we bootup. Configuration below assumes if the Cassandra data
+        # directory is empty it means that we are starting up for the first
+        # time.
+        command: bash -c 'if [ -z "$$(ls -A /var/lib/cassandra/)" ] ; then sleep 0; fi && /docker-entrypoint.sh cassandra -f'
+        # Network for the nodes to communicate
+        networks:
+            dc1ring:
+                ipv4_address: '172.21.128.1'
+        # Maps cassandra data to a local folder. This preserves data across
+        # container restarts. Note a folder n1data get created locally
+        volumes:
+            - ./data/n1data:/var/lib/cassandra
+        # Exposing ports for inter cluste communication
+        expose:
+            - 7000
+            - 7001
+            - 7199
+            - 9042
+            - 9160
+        ports:
+            - '9042:9042'
+        restart: unless-stopped
+        # Docker constainer environment variable. We are using the
+        # CASSANDRA_CLUSTER_NAME to name the cluster. This needs to be the same
+        # across clusters. We are also declaring that DC1N1 is a seed node.
+        environment:
+            - CASSANDRA_CLUSTER_NAME=dev_cluster
+            - CASSANDRA_SEEDS=DC1N1
+            - CQLENG_ALLOW_SCHEMA_MANAGEMENT=true
+
     # APP
-    bigdata-backend:
-        container_name: bigdata-backend
+    backend:
         build:
             context: ./backend
-            # dockerfile: ./backend/Dockerfile
         ports:
             - 5000:5000
+        networks:
+            dc1ring:
+                ipv4_address: '172.21.127.1'
         volumes:
             - ./backend:/app
+        depends_on:
+            - DC1N1
+        restart: unless-stopped
         environment:
             - FLASK_ENV=development
             - FLASK_APP=app.py
             - FLASK_DEBUG=1
-    bigdata-frontend:
-        container_name: bigdata-frontend
+
+    frontend:
         build:
             context: ./frontend
-            # dockerfile: ./frontend/Dockerfile
         volumes:
             - './frontend:/app'
             - '/app/node_modules'
         ports:
             - '3000:3000'
+        depends_on:
+            - backend
+        restart: unless-stopped
         environment:
             - NODE_ENV=development
-        links:
-            - 'bigdata-backend:bigdata-backend'
 
-    # CASSANDRA
-    # Configuration for our seed cassandra node. The node is call DC1N1
-    # .i.e Node 1 in Data center 1.
-    # DC1N1:
-    #     # Cassandra image for Cassandra version 3.11.5. This is pulled
-    #     # from the docker store.
-    #     image: cassandra:3.11.5
-    #     # In case this is the first time starting up cassandra we need to ensure
-    #     # that all nodes do not start up at the same time. Cassandra has a
-    #     # 2 minute rule i.e. 2 minutes between each node boot up. Booting up
-    #     # nodes simultaneously is a mistake. This only needs to happen the firt
-    #     # time we bootup. Configuration below assumes if the Cassandra data
-    #     # directory is empty it means that we are starting up for the first
-    #     # time.
-    #     command: bash -c 'if [ -z "$$(ls -A /var/lib/cassandra/)" ] ; then sleep 0; fi && /docker-entrypoint.sh cassandra -f'
-    #     # Network for the nodes to communicate
-    #     networks:
-    #         - dc1ring
-    #     # Maps cassandra data to a local folder. This preserves data across
-    #     # container restarts. Note a folder n1data get created locally
-    #     volumes:
-    #         - ./n1data:/var/lib/cassandra
-    #     # Docker constainer environment variable. We are using the
-    #     # CASSANDRA_CLUSTER_NAME to name the cluster. This needs to be the same
-    #     # across clusters. We are also declaring that DC1N1 is a seed node.
-    #     environment:
-    #         - CASSANDRA_CLUSTER_NAME=dev_cluster
-    #         - CASSANDRA_SEEDS=DC1N1
-    #     # Exposing ports for inter cluste communication
-    #     expose:
-    #         - 7000
-    #         - 7001
-    #         - 7199
-    #         - 9042
-    #         - 9160
-
-    # # A web based interface for managing your docker containers.
-    # portainer:
-    #     image: portainer/portainer
-    #     networks:
-    #         - dc1ring
-    #     volumes:
-    #         - /var/run/docker.sock:/var/run/docker.sock
-    #         - ./portainer-data:/data
-    #     # Enable you to access potainers web interface from your host machine
-    #     # using http://localhost:10001
-    #     ports:
-    #         - "10001:9000"
 networks:
     dc1ring:
+        ipam:
+            config:
+                - subnet: 172.21.0.0/16
