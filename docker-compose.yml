@@ -19,7 +19,7 @@ services:
         # Network for the nodes to communicate
         networks:
             dc1ring:
-                ipv4_address: '172.21.128.1'
+                ipv4_address: '172.21.128.3'
         # Maps cassandra data to a local folder. This preserves data across
         # container restarts. Note a folder n1data get created locally
         volumes:
@@ -40,19 +40,18 @@ services:
         environment:
             - CASSANDRA_CLUSTER_NAME=dev_cluster
             - CASSANDRA_SEEDS=DC1N1
-            - CQLENG_ALLOW_SCHEMA_MANAGEMENT=true
 
     # APP
     backend:
         build:
             context: ./backend
-        ports:
-            - 5000:5000
+        volumes:
+            - ./backend:/app
         networks:
             dc1ring:
                 ipv4_address: '172.21.127.1'
-        volumes:
-            - ./backend:/app
+        ports:
+            - 5000:5000
         depends_on:
             - DC1N1
         restart: unless-stopped
@@ -60,6 +59,7 @@ services:
             - FLASK_ENV=development
             - FLASK_APP=app.py
             - FLASK_DEBUG=1
+            - CQLENG_ALLOW_SCHEMA_MANAGEMENT=true
 
     frontend:
         build:
