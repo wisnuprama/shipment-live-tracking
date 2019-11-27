@@ -13,3 +13,7 @@ checkpoint_parser = reqparse.RequestParser()
 checkpoint_parser.add_argument('location_name')
 checkpoint_parser.add_argument('location_lat')
 checkpoint_parser.add_argument('location_lng')
+
+location_log_parser = reqparse.RequestParser()
+location_log_parser.add_argument('lat')
+location_log_parser.add_argument('lng')
