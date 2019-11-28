@@ -1,12 +1,10 @@
 import React from "react";
-import { Router, Route, Switch} from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import Home from './Home';
-
 
 export default function Pages() {
   return (
-    <Router>
+    <BrowserRouter>
       <Switch>
         {ROUTES.map(({ title, route }) => (
           <Route
@@ -14,36 +12,76 @@ export default function Pages() {
             exact={route.exact}
             path={route.path}
             render={() => (
-              <React.Fragment>
+              <>
                 <Helmet>
-                  <title>{title}</title>
+                  <title>PDB 4 - {title}</title>
                 </Helmet>
-                <route.component />
-              </React.Fragment>
+                <React.Suspense fallback={<div>Loading...</div>}>
+                  <route.component />
+                </React.Suspense>
+              </>
             )}
           />
         ))}
         <Route
-            render={() => (
-              <React.Fragment>
-                <Helmet>
-                  <title>404</title>
-                </Helmet>
-              </React.Fragment>
-            )}
-          />
+          render={() => (
+            <Helmet>
+              <title>404</title>
+            </Helmet>
+          )}
+        />
       </Switch>
-    </Router>
+    </BrowserRouter>
   );
 }
 
 const ROUTES = [
   {
-    title: "HOME",
+    title: "Home",
     route: {
       exact: true,
-      path: '/',
-      component: Home,
-    },
+      path: "/",
+      component: () => "PDB 4"
+    }
   },
+  {
+    title: "Shipments",
+    route: {
+      exact: true,
+      path: "/shipments",
+      component: React.lazy(() => import("./ShipmentListPage"))
+    }
+  },
+  {
+    title: "Shipments / Checkpoints",
+    route: {
+      exact: true,
+      path: "/shipments/:shippingCode",
+      component: React.lazy(() => import("./CheckpointListPage"))
+    }
+  },
+  {
+    title: "Shipments / Current Location",
+    route: {
+      exact: false,
+      path: "/shipments/:shippingCode/current-location",
+      component: React.lazy(() => import("./LivetrackingPage"))
+    }
+  },
+  {
+    title: "Send the Goods",
+    route: {
+      exact: true,
+      path: "/goods",
+      component: React.lazy(() => import("./GoodsPage"))
+    }
+  },
+  {
+    title: "Goods Receipt",
+    route: {
+      exact: true,
+      path: "/goods-receipt",
+      component: React.lazy(() => import("./GoodsReceiptPage"))
+    }
+  }
 ];
