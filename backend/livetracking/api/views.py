@@ -9,6 +9,7 @@ from cassandra.cqlengine import ValidationError
 from livetracking.datasource.models import Model
 from livetracking.datasource.models import Shipment
 from livetracking.datasource.models import Checkpoint
+from livetracking.datasource.models import LocationLog
 from livetracking.util.errorcql import parseValidationErrToDict
 
 from livetracking.api import parsers
@@ -17,7 +18,9 @@ logger = logging.getLogger('REST API')
 
 
 class AbstractListCreate(Resource):
-
+    """
+    Abstract class of ListCreate
+    """
     model: Model = None
     parser: RequestParser = None
 
@@ -47,11 +50,25 @@ class AbstractListCreate(Resource):
 
 
 class ShipmentListCreate(AbstractListCreate):
+    """
+    [POST]
+    Create new shipment
+
+    [GET]
+    Retrieve all shipments
+    """
     model = Shipment
     parser = parsers.shipment_parser
 
 
 class CheckpointListCreate(AbstractListCreate):
+    """
+    [POST]
+    Create new checkpoint of shipment
+
+    [GET]
+    Retrieve all checkpoints of shipment
+    """
     model = Checkpoint
     parser = parsers.checkpoint_parser
 
@@ -61,18 +78,31 @@ class CheckpointListCreate(AbstractListCreate):
         return super().perform_create(new_data, **kwargs)
 
 
+class LocationLogListCreate(AbstractListCreate):
+    """
+    [POST]
+    Create new location log
+
+    [GET]
+    Retrieve all location logs of a shipment
+    """
+    model = LocationLog
+    parser = parsers.location_log_parser
+
+    def perform_create(self, data: dict, **kwargs):
+        new_data = data.copy()
+        new_data['shipping_code'] = kwargs.get('shipping_code')
+        return super().perform_create(new_data, **kwargs)
+
+
 class ShipmentDetail(Resource):
+    """
+    [GET]
+    Retrieve detail of the shipment
+    """
 
     def get(self, shipping_code: str):
-        try:
-            queryset = Shipment.objects.filter(shipping_code=shipping_code)
-        except ValidationError:
-            raise NotFound
-
-        shipment: Shipment = queryset.get()
-        if shipment is None:
-            raise NotFound
-
+        shipment: Shipment = Shipment.get(shipping_code=shipping_code)
         checkpoints: list = Checkpoint.objects.filter(
             shipping_code=shipping_code)
 
