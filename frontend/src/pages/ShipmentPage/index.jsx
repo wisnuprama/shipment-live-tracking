@@ -5,6 +5,7 @@ import QRCode from "qrcode.react";
 import * as RestApi from "../../modules/restapi";
 
 import SelectPlace from "../../components/SelectPlace";
+import TrackingPosition from "../../components/TrackingPosition";
 
 /**
  * Userflow 4
@@ -38,11 +39,18 @@ export default function ShipmentPage() {
     setFormData({ ...formData, [target.name]: place });
   });
 
+  const handlePositionChange = React.useCallback(newPosition => {
+    console.log(newPosition);
+  });
+
+  const isShipmentAdded = !!shipment;
+
   return (
     <>
+      <TrackingPosition onPositionChange={handlePositionChange} />
       <QRBacground className="container-fluid">
         <QRWrapper className="d-flex justify-content-center align-items-center">
-          {shipment ? (
+          {isShipmentAdded ? (
             <QRCode value={shipment.shippingCode} size={window.innerWidth} />
           ) : (
             <h1>QR Code</h1>
@@ -65,6 +73,7 @@ export default function ShipmentPage() {
               className="form-control"
               placeholder="Inventory code"
               onChange={handleChange}
+              disabled={isShipmentAdded}
               required
             />
           </div>
@@ -74,8 +83,9 @@ export default function ShipmentPage() {
               id="start"
               name="start"
               placeholder="Choose starting point..."
-              required
               onChange={handleSelectPlace}
+              disabled={isShipmentAdded}
+              required
             />
           </div>
           <div className="form-group">
@@ -84,15 +94,17 @@ export default function ShipmentPage() {
               id="destination"
               name="destination"
               placeholder="Choose destination..."
-              required
               onChange={handleSelectPlace}
+              disabled={isShipmentAdded}
+              required
             />
           </div>
           <ButtonStickBottom
             type="submit"
             className="btn btn-primary btn-block"
+            disabled={isShipmentAdded}
           >
-            Start
+            {isShipmentAdded ? "Tracking..." : "Start"}
           </ButtonStickBottom>
         </Form>
       </div>
