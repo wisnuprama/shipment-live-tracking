@@ -17,6 +17,7 @@ application.config['BUNDLE_ERRORS'] = True
 
 
 def run():
-    CORS(application, resources={r"/api/*": {"origins": "*"}})
+    CORS(application, resources={
+         r"/api/*": {"origins": "*"}}, support_credentials=True)
     socketio.run(application, debug=settings.IS_DEVELOPMENT,
                  host=settings.HOST)

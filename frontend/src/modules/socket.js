@@ -14,7 +14,8 @@ export const events = Object.freeze({
   leave: "leave",
 
   liveTracking: "live tracking",
-  sendCoord: "send coordinate"
+  sendCoord: "send coordinate",
+  arrived: "arrived"
 });
 
 export function connect(shippingCode, onConnect, onDisconnect) {
@@ -34,6 +35,12 @@ export function leaveRoom(shippingCode) {
 export function addLiveTrackingListener(onLiveTracking) {
   socket.on(events.liveTracking, data => {
     onLiveTracking(utils.transformResponseData(data));
+  });
+}
+
+export function addArrivedListener(onArrived) {
+  socket.on(events.arrived, data => {
+    onArrived(utils.transformResponseData(data));
   });
 }
 

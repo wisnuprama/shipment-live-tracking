@@ -38,6 +38,10 @@ class Shipment(Model):
     def is_finished(self):
         return self.status == constants.K_STATUS_FINISHED
 
+    @property
+    def is_new(self):
+        return self.status == constants.K_STATUS_CREATED
+
     def to_dict(self):
         return {
             'shipping_code': str(self.shipping_code),

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 import QRCode from "qrcode.react";
 
@@ -11,11 +11,11 @@ import CoordTracker from "./CoordTracker";
  * Userflow 4
  */
 export default function ShipmentPage() {
-  const [shipment, setShipment] = React.useState(() => {
+  const [shipment, setShipment] = useState(() => {
     const val = localStorage.getItem("shipment");
     return val ? JSON.parse(val) : null;
   });
-  const [formData, setFormData] = React.useState(() => {});
+  const [formData, setFormData] = useState(() => {});
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -37,21 +37,21 @@ export default function ShipmentPage() {
       });
   }
 
-  const handleChange = React.useCallback(
+  const handleChange = useCallback(
     ({ target }) => {
       setFormData({ ...formData, [target.name]: target.value });
     },
     [formData]
   );
 
-  const handleSelectPlace = React.useCallback(
+  const handleSelectPlace = useCallback(
     (place, { target }) => {
       setFormData({ ...formData, [target.name]: place });
     },
     [formData]
   );
 
-  const handleClear = React.useCallback(() => {
+  const handleClear = useCallback(() => {
     localStorage.removeItem("shipment");
     setShipment(null);
     setFormData({});
@@ -60,7 +60,7 @@ export default function ShipmentPage() {
   const isShipmentAdded = !!shipment;
   return (
     <>
-      {shipment && <CoordTracker shippingCode={shipment.shippingCode} />}
+      {shipment && <CoordTracker {...shipment} onArrived={handleClear} />}
       <QRBacground className="container-fluid">
         <QRWrapper className="d-flex justify-content-center align-items-center">
           {isShipmentAdded ? (

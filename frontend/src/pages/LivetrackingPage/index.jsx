@@ -19,49 +19,53 @@ export default function LiveTrackingPage() {
   const [isOnline, setIsOnline] = React.useState(() => io.socket.connected);
 
   function getLatestLocation() {
+    // return the latest location
     return locations[locations.length - 1];
   }
 
   useEffect(() => {
-    function loadLocations() {
-      if (!shipment) {
-        restapi
-          .getShipmentDetail(shippingCode)
-          .then(res => res.data)
-          .then(setShipment);
-      }
-
-      if (locations.length === 0) {
-        restapi
-          .getShipmentLocations(shippingCode)
-          .then(res => res.data)
-          .then(setLocations);
-      }
+    if (!shipment) {
+      // load the shipment detail
+      restapi
+        .getShipmentDetail(shippingCode)
+        .then(res => res.data)
+        .then(setShipment);
     }
 
-    function bindSocket() {
-      if (!io.socket.hasListeners(io.events.liveTracking)) {
-        io.connect(shippingCode);
-        io.addLiveTrackingListener(newLocation => {
-          const newLocations = [...locations, newLocation];
-          setLocations(newLocations);
-        });
-      }
-
-      // update socket status
-      setIsOnline(io.socket.connected);
+    if (locations.length === 0) {
+      // load the all shipment locations
+      // for the coord history
+      restapi
+        .getShipmentLocations(shippingCode)
+        .then(res => res.data)
+        .then(setLocations);
     }
-
-    loadLocations();
-    bindSocket();
-
-    return () => {
-      io.leaveRoom(shippingCode);
-    };
   }, [shippingCode, shipment, locations, setLocations, setShipment]);
 
-  const latestLoc = getLatestLocation();
+  useEffect(() => {
+    // check if there is a listener for the event
+    if (!io.socket.hasListeners(io.events.liveTracking)) {
+      // if not connect to the socket
+      io.connect(shippingCode);
+      // and then add the listener
+      io.addLiveTrackingListener(newLocation => {
+        // update the latest location
+        const newLocations = [...locations, newLocation];
+        setLocations(newLocations);
+      });
+    }
 
+    // update socket status
+    setIsOnline(io.socket.connected);
+
+    return () => {
+      // clean up by leave the room
+      io.socket.removeListener(io.events.liveTracking);
+      io.leaveRoom(shippingCode);
+    };
+  }, [locations, setLocations, shippingCode]);
+
+  const latestLoc = getLatestLocation();
   return (
     <>
       <nav className="navbar sticky-top navbar-light bg-light">
@@ -74,10 +78,11 @@ export default function LiveTrackingPage() {
         </div>
       </nav>
 
-      <Toast class="alert alert-success" role="alert" online={isOnline}>
-        {isOnline ? "Online" : "Offline"}
-      </Toast>
+      {/* show online / offline */}
+      <Toast online={isOnline}>{isOnline ? "Online" : "Offline"}</Toast>
 
+      {/* show google maps only when the latestLoc and shipment have loaded
+          else show spinner */}
       <div
         className="d-flex"
         style={{ height: "calc(100vh - 56px)", width: "100%" }}
@@ -89,9 +94,21 @@ export default function LiveTrackingPage() {
             defaultZoom={16}
           >
             {locations.map(loc => (
-              <Marker key={loc.createdAt} {...loc} color="red" size={4} />
+              <Marker key={loc.createdAt} {...loc} color="blue" size={5} />
             ))}
-            <Marker {...latestLoc} color="blue" size={8} />
+            <Marker {...latestLoc} color="green" size={8} />
+            <Marker
+              color="red"
+              size={10}
+              lat={shipment.startLat}
+              lng={shipment.startLng}
+            />
+            <Marker
+              color="red"
+              size={10}
+              lat={shipment.destinationLat}
+              lng={shipment.destinationLng}
+            />
           </GoogleMapReact>
         ) : (
           <div className="spinner-grow ml-auto text-light" role="status">
@@ -119,7 +136,8 @@ const Marker = styled.div`
 
 const Toast = styled.div`
   position: sticky;
-  top: 24px;
+  top: 56px;
+  z-index: 10;
   width: 100%;
   color: white;
   text-align: center;
