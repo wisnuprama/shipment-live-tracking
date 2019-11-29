@@ -17,3 +17,7 @@ export function postShipment(data, ...args) {
     return res;
   });
 }
+
+export function getCheckpoints(shippingCode, ...args) {
+  return http.get(`/shipments/${shippingCode}/checkpoints`, ...args);
+}
