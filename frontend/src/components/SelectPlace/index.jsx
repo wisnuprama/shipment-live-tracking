@@ -12,7 +12,7 @@ export default function SelectPlace({
       className="form-control custom-select"
       {...props}
       onChange={e => {
-        onChange(places[e.target.value], e);
+        onChange({ ...places[e.target.value], value: e.target.value }, e);
       }}
     >
       <option disabled hidden>
