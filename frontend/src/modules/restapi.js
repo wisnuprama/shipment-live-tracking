@@ -34,3 +34,10 @@ export async function getShipmentLocations(shippingCode, ...args) {
   res.data = res.data.map(s => transformResponseData(s));
   return res;
 }
+
+export async function postShipmentCheckpoint(shippingCode, data, ...args) {
+  const transformedData = transformRequestData(data);
+  const res = await http.post(`/shipments/${shippingCode}/checkpoints`, transformedData, ...args);
+  res.data = transformResponseData(res.data);
+  return res;
+}
