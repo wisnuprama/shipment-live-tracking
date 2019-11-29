@@ -11,13 +11,13 @@ export default function Pages() {
             key={route.path}
             exact={route.exact}
             path={route.path}
-            render={() => (
+            render={(props) => (
               <>
                 <Helmet>
                   <title>PDB 4 - {title}</title>
                 </Helmet>
                 <React.Suspense fallback={<div>Loading...</div>}>
-                  <route.component />
+                  <route.component {...props}/>
                 </React.Suspense>
               </>
             )}
