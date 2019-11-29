@@ -47,6 +47,25 @@ def handle_join(data: dict):
     send_latest_location(shipping_code)
 
 
+@socketio.on(constants.K_EVENT_LEAVE)
+def handle_leave(data: dict):
+    """
+    Every shipment has its own room.
+    So when there is a new coordinate from other shipment,
+    it would not floading the other client who see
+    different shipment.
+    """
+    try:
+        # check if the shipping code is a valid one
+        shipping_code = data.get('shipping_code', None)
+        shipment = Shipment.get(shipping_code=shipping_code)
+    except:
+        return False
+
+    # client join a shipment room
+    leave_room(shipping_code, sid=request.sid)
+
+
 @socketio.on(constants.K_EVENT_SEND_COORDINATE)
 def on_send_coordinate(data: dict):
     """

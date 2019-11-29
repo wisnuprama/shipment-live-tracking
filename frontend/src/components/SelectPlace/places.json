@@ -1,22 +1,22 @@
 [
-    {
-        "locationName": "Fasilkom Lama",
-        "lat": "-6.364184",
-        "lng": "106.828720"
-    },
-    {
-        "locationName": "Balairung UI",
-        "lat": "-6.368615",
-        "lng": "106.829389"
-    },
-    {
-        "locationName": "Fasilkom Baru",
-        "lat": "-6.370562",
-        "lng": "106.827353"
-    },
-    {
-        "locationName": "MIPA",
-        "lat": "-6.369743",
-        "lng": "106.826117"
-    }
+  {
+    "locationName": "Fasilkom Lama",
+    "lat": -6.364184,
+    "lng": 106.82872
+  },
+  {
+    "locationName": "Balairung UI",
+    "lat": -6.368615,
+    "lng": 106.829389
+  },
+  {
+    "locationName": "Fasilkom Baru",
+    "lat": -6.370562,
+    "lng": 106.827353
+  },
+  {
+    "locationName": "MIPA",
+    "lat": -6.369743,
+    "lng": 106.826117
+  }
 ]
