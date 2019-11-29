@@ -1,2 +1,2 @@
 #!/bin/sh
-docker build -f Dockerfile.prod -t bigdata-frontend:prod .
+docker build -f Dockerfile.prod -t frontend:prod .

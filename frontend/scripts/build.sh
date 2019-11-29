@@ -1,2 +1,2 @@
 #!/bin/sh
-docker build -t bigdata-frontend:dev .
+docker build -t frontend:dev .

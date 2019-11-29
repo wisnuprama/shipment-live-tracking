@@ -21,12 +21,12 @@ class Shipment(Model):
 
     # location
     start_name = columns.Text(required=True)
-    start_lat = columns.Text(required=True)
-    start_lng = columns.Text(required=True)
+    start_lat = columns.Double(required=True)
+    start_lng = columns.Double(required=True)
 
     destination_name = columns.Text(required=True)
-    destination_lat = columns.Text(required=True)
-    destination_lng = columns.Text(required=True)
+    destination_lat = columns.Double(required=True)
+    destination_lng = columns.Double(required=True)
 
     def set_as_otw(self):
         self.status = constants.K_STATUS_OTW
@@ -64,8 +64,8 @@ class Checkpoint(Model):
 
     location_name = columns.Text(primary_key=True,
                                  required=True)
-    location_lat = columns.Text(required=True)
-    location_lng = columns.Text(required=True)
+    location_lat = columns.Double(required=True)
+    location_lng = columns.Double(required=True)
 
     def to_dict(self):
         return {
@@ -85,8 +85,8 @@ class LocationLog(Model):
                                   clustering_order="ASC",
                                   default=datetime.utcnow)
     # track movement
-    lat = columns.Text(required=True)
-    lng = columns.Text(required=True)
+    lat = columns.Double(required=True)
+    lng = columns.Double(required=True)
 
     def to_dict(self):
         return {
