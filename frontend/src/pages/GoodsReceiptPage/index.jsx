@@ -1,34 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import QrReader from "react-qr-reader";
 
 import SelectPlace from "../../components/SelectPlace";
 
 import * as restapi from "../../modules/restapi";
-import * as utils from "../../modules/utils";
 
 /**
  * Userflow 3
  */
 export default function GoodsReceiptPage() {
-  const [shipment, setShipment] = useState(
-    utils.transformResponseData({
-      shipping_code: "3eebf26b-6ba2-4511-8bff-8dc6e894e347",
-      created_at: "2019-11-29 18:00:01.168000",
-      inventory_code: "Test",
-      status: "Finished",
-      is_finished: true,
-      start_name: "Fasilkom Baru",
-      start_lat: -6.370562,
-      start_lng: 106.827353,
-      destination_name: "Home",
-      destination_lat: -6.3834941,
-      destination_lng: 106.82275899999999,
-      checkpoints: []
-    })
-  );
+  const [shipment, setShipment] = useState(null);
   const [errReaderMsg, setErrReaderMsg] = useState(null);
   const [selectedCheckpoint, selectCheckpoint] = useState(null);
+  const qrReaderRef = useRef();
 
   function handleScan(data) {
     if (data) {
@@ -39,7 +24,7 @@ export default function GoodsReceiptPage() {
           setShipment(data);
           setErrReaderMsg(null);
         })
-        .catch(err => setErrReaderMsg(`${err}`));
+        .catch(err => setErrReaderMsg(err.message));
     }
   }
 
@@ -62,33 +47,46 @@ export default function GoodsReceiptPage() {
     restapi
       .postShipmentCheckpoint(shipment.shippingCode, data)
       .then(() => alert("Saved"))
-      .catch(alert);
+      .catch(err => setErrReaderMsg(err.message));
   }
 
+  const hasSupportMedia = !!navigator.mediaDevices;
   return (
     <div className="d-flex flex-column">
       {errReaderMsg && <Toast color="#f81e07">{errReaderMsg}</Toast>}
-      {!shipment ? (
-        <QrReader
-          delay={500}
-          onError={handleError}
-          onScan={handleScan}
-          style={{
-            width: "100%",
-            maxWidth: 400,
-            marginLeft: "auto",
-            marginRight: "auto"
-          }}
-        />
-      ) : (
-        <QRBg className="d-flex" onClick={handleToggleQr}>
-          <div style={{ fontSize: 36, color: "#fff", margin: "auto" }}>
-            Click to scan
-          </div>
-        </QRBg>
-      )}
+      <QrReader
+        ref={qrReaderRef}
+        legacyMode={!hasSupportMedia}
+        delay={500}
+        onError={handleError}
+        onScan={handleScan}
+        resolution={1000}
+        style={{
+          display: hasSupportMedia ? "block" : "none",
+          width: "100%",
+          maxWidth: 400,
+          marginLeft: "auto",
+          marginRight: "auto"
+        }}
+      />
+      {shipment ||
+        (!hasSupportMedia && (
+          <QRBg
+            className="d-flex"
+            onClick={
+              hasSupportMedia
+                ? handleToggleQr
+                : () => qrReaderRef.current.openImageDialog()
+            }
+          >
+            <div style={{ fontSize: 36, color: "#fff", margin: "auto" }}>
+              {hasSupportMedia ? "Click to scan" : "Choose photo"}
+            </div>
+          </QRBg>
+        ))}
+
       <div className="container mt-4">
-        <h3>PDB Receive</h3>
+        <h3>Goods Receipt</h3>
         <div className="d-flex flex-column">
           <label htmlFor="checkpoint">
             <strong>Choose checkpoint</strong>
@@ -104,15 +102,15 @@ export default function GoodsReceiptPage() {
           <label htmlFor="shippingCode">
             <strong>Shipping Code</strong>
           </label>
-          <p id="shippingCode">{shipment && shipment.shippingCode}</p>
+          <p id="shippingCode">{shipment ? shipment.shippingCode : "-"}</p>
           <label htmlFor="start">
             <strong>Start</strong>
           </label>
-          <p id="start">{shipment && shipment.startName}</p>
+          <p id="start">{shipment ? shipment.startName : "-"}</p>
           <label htmlFor="destination">
             <strong>Destination</strong>
           </label>
-          <p id="destination">{shipment && shipment.destinationName}</p>
+          <p id="destination">{shipment ? shipment.destinationName : "-"}</p>
         </div>
       </div>
       <ButtonWrapper>
@@ -130,7 +128,7 @@ export default function GoodsReceiptPage() {
 
 const Toast = styled.div`
   position: sticky;
-  top: 56px;
+  top: 0px;
   z-index: 10;
   width: 100%;
   color: white;
