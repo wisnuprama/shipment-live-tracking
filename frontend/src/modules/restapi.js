@@ -3,17 +3,34 @@ import axios from "axios";
 import { transformRequestData, transformResponseData } from "./utils";
 
 export const http = axios.create({
-  baseURL: "http://localhost:5000/api"
+  baseURL: `http://${document.domain}:5000/api`,
+  crossDomain: true,
+  headers: {
+    "Access-Control-Allow-Origin": "*"
+  }
 });
 
-export function getShipments(...args) {
-  return http.get("/shipments", ...args);
+export async function getShipments(...args) {
+  const res = await http.get("/shipments", ...args);
+  res.data = res.data.map(s => transformResponseData(s));
+  return res;
 }
 
-export function postShipment(data, ...args) {
+export async function postShipment(data, ...args) {
   const transformedData = transformRequestData(data);
-  return http.post("/shipments", transformedData, ...args).then(res => {
-    res.data = transformResponseData(res.data);
-    return res;
-  });
+  const res = await http.post("/shipments", transformedData, ...args);
+  res.data = transformResponseData(res.data);
+  return res;
+}
+
+export async function getShipmentDetail(shippingCode, ...args) {
+  const res = await http.get(`/shipments/${shippingCode}`, ...args);
+  res.data = transformResponseData(res.data);
+  return res;
+}
+
+export async function getShipmentLocations(shippingCode, ...args) {
+  const res = await http.get(`/shipments/${shippingCode}/locations`, ...args);
+  res.data = res.data.map(s => transformResponseData(s));
+  return res;
 }

@@ -16,7 +16,16 @@ export default function Pages() {
                 <Helmet>
                   <title>PDB 4 - {title}</title>
                 </Helmet>
-                <React.Suspense fallback={<div>Loading...</div>}>
+                <React.Suspense
+                  fallback={
+                    <div
+                      className="spinner-grow ml-auto text-light"
+                      role="status"
+                    >
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  }
+                >
                   <route.component />
                 </React.Suspense>
               </>
