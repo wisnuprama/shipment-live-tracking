@@ -45,6 +45,14 @@ const ROUTES = [
     }
   },
   {
+    title: "Start shipment",
+    route: {
+      exact: false,
+      path: "/start-shipment",
+      component: React.lazy(() => import("./ShipmentPage"))
+    }
+  },
+  {
     title: "Shipments",
     route: {
       exact: true,
@@ -66,14 +74,6 @@ const ROUTES = [
       exact: false,
       path: "/shipments/:shippingCode/current-location",
       component: React.lazy(() => import("./LivetrackingPage"))
-    }
-  },
-  {
-    title: "Send the Goods",
-    route: {
-      exact: true,
-      path: "/goods",
-      component: React.lazy(() => import("./GoodsPage"))
     }
   },
   {
