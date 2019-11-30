@@ -23,18 +23,29 @@ export default function CheckpointListPage(props) {
 
   return (
     <Container>
-      <h3>List of Checkpoints: </h3>
-      { data.map((checkpoint) => {
+      <Title>Checkpoints</Title>
+      <Card
+        title="Check current position"
+        next={`/shipments/${shippingCode}/current-location`}
+      />
+      <hr />
+      {data.map((checkpoint, index) => {
         return (
-          <Card 
+          <Card
             key={checkpoint.locationName}
-            title={checkpoint.locationName}
-            next={`/shipments/${checkpoint.shippingCode}/current-location`} />
+            title={`${index + 1} | ${checkpoint.locationName}`}
+            next={`/shipments/${checkpoint.shippingCode}/current-location`}
+          />
         );
-      }) }
+      })}
     </Container>
   );
 }
+
+const Title = styled.h3`
+  position: sticky;
+  top: 0;
+`
 
 const Container = styled.div`
   position: relative;

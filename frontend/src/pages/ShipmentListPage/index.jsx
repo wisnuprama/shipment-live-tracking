@@ -21,13 +21,13 @@ function ShipmentListPage() {
 
   return (
     <Container>
-      <h3>List of Shipments: </h3>
+      <Title>All Shipments</Title>
       { data.map((shipment) => {
         return (
           <Card 
             key={shipment.shippingCode}
-            title={shipment.shippingCode}
-            description={`${shipment.startName} - ${shipment.destinationName}`}
+            title={`SC${shipment.shippingCode}`}
+            description={`status: ${shipment.status} | ${shipment.startName} -> ${shipment.destinationName}`}
             next={`/shipments/${shipment.shippingCode}`} />
         );
       }) }
@@ -36,6 +36,11 @@ function ShipmentListPage() {
 }
 
 export default ShipmentListPage;
+
+const Title = styled.h3`
+  position: sticky;
+  top: 0;
+`
 
 const Container = styled.div`
   position: relative;
