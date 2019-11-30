@@ -4,3 +4,6 @@ export const IS_DEVELOPMENT = process.env.NODE_ENV === "development";
 export const BACKEND_URL = IS_DEVELOPMENT
   ? "http://localhost:5000"
   : "https://pdb.wisnuprama.tech/livetracking";
+export const SOCKET_URL = IS_DEVELOPMENT
+  ? "http://localhost:5000"
+  : "https://pdb.wisnuprama.tech";
