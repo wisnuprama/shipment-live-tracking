@@ -9,7 +9,6 @@ COPY package.json /app/package.json
 COPY package.json /app/package.json
 RUN npm install yarn -g --silent
 RUN yarn --silent
-RUN npm install react-scripts@3.2.0 -g --silent
 
 # build
 COPY . /app
