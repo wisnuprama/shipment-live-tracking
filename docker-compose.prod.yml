@@ -18,8 +18,8 @@ services:
     # APP
     frontend:
         build:
-            context: .
-            dockerfile: ./frontend/Dockerfile.prod
+            context: ./frontend
+            dockerfile: ./Dockerfile.prod
         restart: unless-stopped
         ports:
             - '80:80'
