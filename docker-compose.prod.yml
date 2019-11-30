@@ -26,8 +26,8 @@ services:
 
     backend:
         build:
-            context: .
-            dockerfile: ./backend/Dockerfile.prod
+            context: ./backend
+            dockerfile: ./Dockerfile.prod
         volumes:
             - ./backend:/app
         networks:
