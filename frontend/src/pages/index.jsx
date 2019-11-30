@@ -12,7 +12,7 @@ export default function Pages() {
         ROUTES.map(
           r =>
             !r.route.path.includes(":shipping") && (
-              <Link to="/start-shipment">
+              <Link to={r.route.path}>
                 <h4>{r.title}</h4>
               </Link>
             )
@@ -29,7 +29,7 @@ export default function Pages() {
             key={route.path}
             exact={route.exact}
             path={route.path}
-            render={(props) => (
+            render={props => (
               <>
                 <Helmet>
                   <title>PDB 4 - {title}</title>
