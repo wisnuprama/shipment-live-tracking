@@ -5,15 +5,15 @@ services:
     portainer:
         image: portainer/portainer
         networks:
-            - dc1ring
+            dc1ring
+                ipv4_address: '172.21.127.2'
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - ./data/portainer-data:/data
         # Enable you to access potainers web interface from your host machine
-        # using http://localhost:10001
         restart: always
         ports:
-            - "10001:9000"
+            - "9000:9000"
 
     # APP
     frontend:
@@ -25,6 +25,8 @@ services:
             - ./frontend/nginx:/etc/nginx/conf.d
             - ./data/certbot/conf:/etc/letsencrypt
             - ./data/certbot/www:/var/www/certbot
+        networks:
+            dc1ring
         restart: unless-stopped
         ports:
             - "80:80"
