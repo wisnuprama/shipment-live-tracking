@@ -50,13 +50,6 @@ export default function Pages() {
             )}
           />
         ))}
-        <Route
-          render={() => (
-            <Helmet>
-              <title>404</title>
-            </Helmet>
-          )}
-        />
       </Switch>
     </BrowserRouter>
   );
