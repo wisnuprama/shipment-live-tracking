@@ -14,9 +14,12 @@ socketio = SocketIO(application, cors_allowed_origins="*")
 # CONFIG
 application.config['SECRET_KEY'] = settings.SECRET_KEY
 application.config['BUNDLE_ERRORS'] = True
-
+CORS(application, resources={
+     r"/api/*": {"origins": "*"}}, support_credentials=True)
 
 def run():
-    CORS(application, resources={r"/api/*": {"origins": "*"}})
     socketio.run(application, debug=settings.IS_DEVELOPMENT,
                  host=settings.HOST)
+
+if __name__ == "__main__":
+    run()

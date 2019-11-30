@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { getShipments } from "../../modules/restapi";
-import { Card } from "../../components/Card";
+import Card from "../../components/Card";
 
 /**
  * Userflow 5
@@ -25,10 +25,10 @@ function ShipmentListPage() {
       { data.map((shipment) => {
         return (
           <Card 
-            key={shipment.shipping_code}
-            title={shipment.shipping_code}
-            description={`${shipment.start_name} - ${shipment.destination_name}`}
-            next={`/shipments/${shipment.shipping_code}`} />
+            key={shipment.shippingCode}
+            title={shipment.shippingCode}
+            description={`${shipment.startName} - ${shipment.destinationName}`}
+            next={`/shipments/${shipment.shippingCode}`} />
         );
       }) }
     </Container>

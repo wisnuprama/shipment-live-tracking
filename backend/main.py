@@ -1,9 +1,6 @@
 import os
 import sys
-
-
-def main():
-    import livetracking.app
+from livetracking import app, application
 
 if __name__ == '__main__':
-    main()
+    app.run()

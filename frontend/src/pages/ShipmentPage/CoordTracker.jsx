@@ -13,7 +13,15 @@ const defaultLatestCoord = shippingCode => ({
   lng: null
 });
 
-export default function CoordTracker({ shippingCode }) {
+/**
+ * Track the coordinate of the user and send to server
+ */
+export default function CoordTracker({
+  shippingCode,
+  destinationLat,
+  destinationLng,
+  onArrived
+}) {
   const [watchId, setWatchId] = React.useState(null);
   const [isOnline, setIsOnline] = React.useState(() => io.socket.connected);
   const [latestCoord, setLatestCoord] = React.useState(
@@ -23,6 +31,9 @@ export default function CoordTracker({ shippingCode }) {
   React.useEffect(() => {
     function handlePositionChange({ coords }) {
       const { latitude: lat, longitude: lng } = coords;
+      console.log(coords);
+      // we only update the latest coordinate
+      // when the old coordinate is different from the new one
       if (latestCoord.lat !== lat || latestCoord.lng !== lng) {
         setLatestCoord({ shippingCode, lat, lng });
         io.emitSendCoordinate(shippingCode, lat, lng);
@@ -35,7 +46,6 @@ export default function CoordTracker({ shippingCode }) {
     } else if (!watchId && shippingCode) {
       // socker event handler
       io.connect(shippingCode);
-
       // watch for position change
       const { geolocation } = navigator;
       const id = geolocation.watchPosition(
@@ -43,6 +53,8 @@ export default function CoordTracker({ shippingCode }) {
         () => alert("Location needed to track the shipment"),
         geoOptions
       );
+      // save the watch id so we can
+      // use it for clean up
       setWatchId(id);
     }
 
@@ -52,6 +64,7 @@ export default function CoordTracker({ shippingCode }) {
       if (watchId !== null) {
         // clean up
         navigator.geolocation.clearWatch(watchId);
+        io.socket.removeListener(io.events.arrived);
         io.leaveRoom(shippingCode);
       }
     };
@@ -61,8 +74,28 @@ export default function CoordTracker({ shippingCode }) {
     setWatchId,
     setIsOnline,
     latestCoord,
-    setLatestCoord
+    setLatestCoord,
+    destinationLat,
+    destinationLng
   ]);
+
+  React.useEffect(() => {
+    if (io.socket.hasListeners(io.events.arrived)) {
+      io.socket.removeListener(io.events.arrived);
+    }
+
+    io.addArrivedListener(data => {
+      // clear the shipment
+      onArrived(data);
+      // force disconnect because the goods has arrived
+      io.socket.disconnect();
+    });
+
+    return () => {
+      io.socket.removeListener(io.events.arrived);
+    };
+  }, [onArrived]);
+
   return (
     <Container
       className="d-flex align-items-center p-2 clearfix"

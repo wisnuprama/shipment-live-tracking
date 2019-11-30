@@ -1,2 +1,2 @@
 #!/bin/sh
-docker build -t bigdata-backend:latest .
+docker build -t backend:latest .

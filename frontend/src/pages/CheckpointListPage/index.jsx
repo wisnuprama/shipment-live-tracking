@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { getCheckpoints } from "../../modules/restapi";
-import { Card } from "../../components/Card";
+import Card from "../../components/Card";
 
 /**
  * Userflow 1
  */
 
-function CheckpointListPage(props) {
+export default function CheckpointListPage(props) {
   const [data, setData] = useState([]);
 
   const { shippingCode } = props.match.params;
@@ -27,16 +27,14 @@ function CheckpointListPage(props) {
       { data.map((checkpoint) => {
         return (
           <Card 
-            key={checkpoint.location_name}
-            title={checkpoint.location_name}
-            next={`/shipments/${checkpoint.shipping_code}/current-location`} />
+            key={checkpoint.locationName}
+            title={checkpoint.locationName}
+            next={`/shipments/${checkpoint.shippingCode}/current-location`} />
         );
       }) }
     </Container>
   );
 }
-
-export default CheckpointListPage;
 
 const Container = styled.div`
   position: relative;
