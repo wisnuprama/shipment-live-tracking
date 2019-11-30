@@ -1,6 +1,4 @@
-n1data
-n2data
-portainer-data
+data
 **/node_modules
 # Byte-compiled / optimized / DLL files
 __pycache__/
