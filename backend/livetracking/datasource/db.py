@@ -13,12 +13,15 @@ MODELS = [
 ]
 
 def build():
+    # setup connection
     connection.setup(protocol_version=3, **settings.DATABASE['config'])
-    if settings.IS_DEVELOPMENT:
-        create_keyspace_simple(**settings.DATABASE['keyspace'])
-    else:
-        create_keyspace_network_topology(**settings.DATABASE['keyspace'])
+    # create keyspace, because we only have 2 nodes in 1 datacenter
+    # then we use simple strategy
+    create_keyspace_simple(**settings.DATABASE['keyspace'])
 
+    # sync each model
+    # if you alter field, this mechanism
+    # wont sync your changes.
     for model in MODELS:
         sync_table(model)
 
