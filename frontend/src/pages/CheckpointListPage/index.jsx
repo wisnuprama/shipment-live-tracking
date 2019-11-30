@@ -12,14 +12,13 @@ export default function CheckpointListPage(props) {
 
   const { shippingCode } = props.match.params;
 
-  async function fetchData() {
-    const response = await getCheckpoints(shippingCode);
-    setData(response.data);
-  }
-
   useEffect(() => {
+    async function fetchData() {
+      const response = await getCheckpoints(shippingCode);
+      setData(response.data);
+    }
     fetchData();
-  }, []);
+  }, [shippingCode, setData]);
 
   return (
     <Container>
@@ -45,7 +44,7 @@ export default function CheckpointListPage(props) {
 const Title = styled.h3`
   position: sticky;
   top: 0;
-`
+`;
 
 const Container = styled.div`
   position: relative;

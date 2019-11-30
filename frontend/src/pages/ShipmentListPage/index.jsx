@@ -10,27 +10,27 @@ import Card from "../../components/Card";
 function ShipmentListPage() {
   const [data, setData] = useState([]);
 
-  async function fetchData() {
-    const response = await getShipments();
-    setData(response.data);
-  }
-
   useEffect(() => {
+    async function fetchData() {
+      const response = await getShipments();
+      setData(response.data);
+    }
     fetchData();
-  }, []);
+  }, [setData]);
 
   return (
     <Container>
       <Title>All Shipments</Title>
-      { data.map((shipment) => {
+      {data.map(shipment => {
         return (
-          <Card 
+          <Card
             key={shipment.shippingCode}
             title={`SC${shipment.shippingCode}`}
             description={`status: ${shipment.status} | ${shipment.startName} -> ${shipment.destinationName}`}
-            next={`/shipments/${shipment.shippingCode}`} />
+            next={`/shipments/${shipment.shippingCode}`}
+          />
         );
-      }) }
+      })}
     </Container>
   );
 }
@@ -40,7 +40,7 @@ export default ShipmentListPage;
 const Title = styled.h3`
   position: sticky;
   top: 0;
-`
+`;
 
 const Container = styled.div`
   position: relative;

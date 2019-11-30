@@ -1,8 +1,10 @@
 import io from "socket.io-client";
+
+import * as config from "../config";
 import * as utils from "./utils";
 
 export function createSocket() {
-  return io(`http://${document.domain}:5000`);
+  return io(`${config.BACKEND_URL}`);
 }
 
 export const socket = createSocket();

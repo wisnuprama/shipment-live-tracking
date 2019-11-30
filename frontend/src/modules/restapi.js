@@ -1,9 +1,10 @@
 import axios from "axios";
 
+import * as config from "../config";
 import { transformRequestData, transformResponseData } from "./utils";
 
 export const http = axios.create({
-  baseURL: `http://${document.domain}:5000/api`,
+  baseURL: `${config.BACKEND_URL}/api`,
   crossDomain: true,
   headers: {
     "Access-Control-Allow-Origin": "*"
@@ -37,7 +38,11 @@ export async function getShipmentLocations(shippingCode, ...args) {
 
 export async function postShipmentCheckpoint(shippingCode, data, ...args) {
   const transformedData = transformRequestData(data);
-  const res = await http.post(`/shipments/${shippingCode}/checkpoints`, transformedData, ...args);
+  const res = await http.post(
+    `/shipments/${shippingCode}/checkpoints`,
+    transformedData,
+    ...args
+  );
   res.data = transformResponseData(res.data);
   return res;
 }
