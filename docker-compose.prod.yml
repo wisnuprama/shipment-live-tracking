@@ -22,7 +22,7 @@ services:
             dockerfile: ./Dockerfile.prod
         restart: unless-stopped
         ports:
-            - '80:80'
+            - "80:80"
 
     backend:
         build:
@@ -34,7 +34,7 @@ services:
             dc1ring:
                 ipv4_address: '172.21.127.1'
         ports:
-            - 5000:5000
+            - "5000:5000"
         depends_on:
             - DC1N1
         restart: unless-stopped
