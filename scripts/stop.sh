@@ -1,2 +1,2 @@
 #!/bin/sh
-docker-compose stop
+docker-compose -f docker-compose.prod.yml up stop
