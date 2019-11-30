@@ -1,2 +1,2 @@
 #!/bin/sh
-docker run -it -p 5000:5000 bigdata-backend
+docker run -it -p 5000:5000 backend

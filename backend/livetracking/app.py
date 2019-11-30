@@ -5,5 +5,5 @@ import livetracking.web
 import livetracking.api
 import livetracking.socket
 
-import livetracking
-livetracking.run()
+from livetracking import run
+from livetracking import application
