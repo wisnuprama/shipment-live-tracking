@@ -24,15 +24,12 @@ export default function LiveTrackingPage() {
   }
 
   useEffect(() => {
-    if (!shipment) {
+    if (!shipment && locations.length === 0) {
       // load the shipment detail
       restapi
         .getShipmentDetail(shippingCode)
         .then(res => res.data)
         .then(setShipment);
-    }
-
-    if (locations.length === 0) {
       // load the all shipment locations
       // for the coord history
       restapi
