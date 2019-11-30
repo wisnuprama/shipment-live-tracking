@@ -1,12 +1,30 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 export default function Pages() {
+  const home = {
+    title: "Home",
+    route: {
+      exact: true,
+      path: "/",
+      component: () =>
+        ROUTES.map(
+          r =>
+            !r.route.path.includes(":shipping") && (
+              <Link to="/start-shipment">
+                <h4>{r.title}</h4>
+              </Link>
+            )
+        )
+    }
+  };
+  const routes = [home, ...ROUTES];
+
   return (
     <BrowserRouter>
       <Switch>
-        {ROUTES.map(({ title, route }) => (
+        {routes.map(({ title, route }) => (
           <Route
             key={route.path}
             exact={route.exact}
@@ -45,14 +63,6 @@ export default function Pages() {
 }
 
 const ROUTES = [
-  {
-    title: "Home",
-    route: {
-      exact: true,
-      path: "/",
-      component: () => "PDB 4"
-    }
-  },
   {
     title: "Start shipment",
     route: {
