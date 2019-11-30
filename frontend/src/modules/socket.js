@@ -4,7 +4,11 @@ import * as config from "../config";
 import * as utils from "./utils";
 
 export function createSocket() {
-  return io(`${config.BACKEND_URL}`);
+  const options = {};
+  if (!config.IS_DEVELOPMENT) {
+    options.path = "/livetracking/socket.io";
+  }
+  return io(`${config.BACKEND_URL}`, options);
 }
 
 export const socket = createSocket();
