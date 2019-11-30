@@ -41,3 +41,9 @@ export async function postShipmentCheckpoint(shippingCode, data, ...args) {
   res.data = transformResponseData(res.data);
   return res;
 }
+
+export async function getCheckpoints(shippingCode, ...args) {
+  const res = await http.get(`/shipments/${shippingCode}/checkpoints`, ...args);
+  res.data = res.data.map(s => transformResponseData(s));
+  return res;
+}
