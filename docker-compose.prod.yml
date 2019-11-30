@@ -5,7 +5,7 @@ services:
     portainer:
         image: portainer/portainer
         networks:
-            dc1ring
+            dc1ring:
                 ipv4_address: '172.21.127.2'
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
