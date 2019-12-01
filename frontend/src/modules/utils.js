@@ -18,8 +18,10 @@ export function transformData(data, fn) {
 
   keys.forEach(k => {
     let value = data[k];
-    if (typeof k === "object") {
-      value = transformRequestData(k);
+    if (Array.isArray(value)) {
+      value = value.map(v => transformData(v, fn));
+    } else if (typeof k === "object") {
+      value = transformData(k, fn);
     }
     newData[fn(k)] = value;
   });
