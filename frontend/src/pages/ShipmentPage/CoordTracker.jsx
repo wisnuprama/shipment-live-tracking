@@ -3,8 +3,11 @@ import styled from "styled-components";
 
 import * as io from "../../modules/socket";
 
-const geoOptions = {
-  enableHighAccuracy: true
+const GEO_OPTIONS = {
+  enableHighAccuracy: false,
+  timeout: 250,
+  maximumAge: 0,
+  distanceFilter: 5
 };
 
 const defaultLatestCoord = shippingCode => ({
@@ -51,7 +54,7 @@ export default function CoordTracker({
       const id = geolocation.watchPosition(
         handlePositionChange,
         () => alert("Location needed to track the shipment"),
-        geoOptions
+        GEO_OPTIONS
       );
       // save the watch id so we can
       // use it for clean up
