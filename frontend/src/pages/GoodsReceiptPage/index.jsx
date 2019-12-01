@@ -54,36 +54,36 @@ export default function GoodsReceiptPage() {
   return (
     <div className="d-flex flex-column">
       {errReaderMsg && <Toast color="#f81e07">{errReaderMsg}</Toast>}
-      <QrReader
-        ref={qrReaderRef}
-        legacyMode={!hasSupportMedia}
-        onError={handleError}
-        onScan={handleScan}
-        style={{
-          display: hasSupportMedia ? "block" : "none",
-          width: "100%",
-          height: 360,
-          objectFit: 'fill',
-          maxWidth: 400,
-          marginLeft: "auto",
-          marginRight: "auto"
-        }}
-      />
-      {shipment ||
-        (!hasSupportMedia && (
-          <QRBg
-            className="d-flex"
-            onClick={
-              hasSupportMedia
-                ? handleToggleQr
-                : () => qrReaderRef.current.openImageDialog()
-            }
-          >
-            <div style={{ fontSize: 36, color: "#fff", margin: "auto" }}>
-              {hasSupportMedia ? "Click to scan" : "Choose photo"}
-            </div>
-          </QRBg>
-        ))}
+      {!!shipment || !hasSupportMedia ? (
+        <QRBg
+          className="d-flex"
+          onClick={
+            hasSupportMedia
+              ? handleToggleQr
+              : () => qrReaderRef.current.openImageDialog()
+          }
+        >
+          <div style={{ fontSize: 36, color: "#fff", margin: "auto" }}>
+            {hasSupportMedia ? "Click to scan" : "Choose photo"}
+          </div>
+        </QRBg>
+      ) : (
+        <QrReader
+          ref={qrReaderRef}
+          legacyMode={!hasSupportMedia}
+          onError={handleError}
+          onScan={handleScan}
+          style={{
+            display: hasSupportMedia ? "block" : "none",
+            width: "100%",
+            height: 360,
+            objectFit: "fill",
+            maxWidth: 400,
+            marginLeft: "auto",
+            marginRight: "auto"
+          }}
+        />
+      )}
 
       <div className="container mt-4">
         <h3>Goods Receipt</h3>

@@ -12,7 +12,7 @@ export default function Pages() {
         ROUTES.map(
           r =>
             !r.route.path.includes(":shipping") && (
-              <Link to={r.route.path}>
+              <Link key={r.route.path} to={r.route.path}>
                 <h4>{r.title}</h4>
               </Link>
             )
