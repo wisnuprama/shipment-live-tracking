@@ -45,6 +45,7 @@ services:
     backend:
         build:
             context: ./backend
+            dockerfile: ./Dockerfile
         volumes:
             - ./backend:/app
         networks:
@@ -64,6 +65,7 @@ services:
     frontend:
         build:
             context: ./frontend
+            dockerfile: ./Dockerfile
         volumes:
             - './frontend:/app'
             - '/app/node_modules'

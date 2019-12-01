@@ -75,7 +75,7 @@ export default function ShipmentPage() {
       <QRBacground className="container-fluid">
         <QRWrapper className="d-flex justify-content-center align-items-center">
           {isShipmentAdded ? (
-            <QRCode value={shipment.shippingCode} size={window.innerWidth} />
+            <QRCode value={shipment.shippingCode} size={300} />
           ) : (
             <h1>QR Code</h1>
           )}
@@ -173,7 +173,7 @@ const ButtonStickBottom = styled.button`
 `;
 
 const QRBacground = styled.div`
-  background: #333;
+  background: #f5f5f5;
 `;
 
 const QRWrapper = styled.div`

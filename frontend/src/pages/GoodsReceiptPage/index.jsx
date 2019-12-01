@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
-import QrReader from "react-qr-reader";
+import QrReader from "react-qr-scanner";
 
 import SelectPlace from "../../components/SelectPlace";
 
@@ -57,13 +57,13 @@ export default function GoodsReceiptPage() {
       <QrReader
         ref={qrReaderRef}
         legacyMode={!hasSupportMedia}
-        delay={500}
         onError={handleError}
         onScan={handleScan}
-        resolution={1000}
         style={{
           display: hasSupportMedia ? "block" : "none",
           width: "100%",
+          height: 360,
+          objectFit: 'fill',
           maxWidth: 400,
           marginLeft: "auto",
           marginRight: "auto"
