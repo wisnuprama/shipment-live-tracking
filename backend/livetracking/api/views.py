@@ -102,7 +102,11 @@ class ShipmentDetail(Resource):
     """
 
     def get(self, shipping_code: str):
-        shipment: Shipment = Shipment.get(shipping_code=shipping_code)
+        try:
+            shipment: Shipment = Shipment.get(shipping_code=shipping_code)
+        except:
+            raise NotFound()
+
         checkpoints: list = Checkpoint.objects.filter(
             shipping_code=shipping_code)
 
