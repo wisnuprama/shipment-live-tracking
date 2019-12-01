@@ -4,7 +4,10 @@ import styled from "styled-components";
 import * as io from "../../modules/socket";
 
 const geoOptions = {
-  enableHighAccuracy: true
+  enableHighAccuracy: false,
+  timeout: 250,
+  maximumAge: 0,
+  distanceFilter: 5
 };
 
 const defaultLatestCoord = shippingCode => ({
