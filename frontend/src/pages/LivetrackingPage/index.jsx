@@ -106,6 +106,15 @@ export default function LiveTrackingPage() {
               lat={shipment.destinationLat}
               lng={shipment.destinationLng}
             />
+            {shipment.checkpoints.map(cp => (
+              <Marker
+                key={cp.createdAt}
+                color="black"
+                size={5}
+                lat={cp.locationLat}
+                lng={cp.locationLng}
+              />
+            ))}
           </GoogleMapReact>
         ) : (
           <div className="spinner-grow ml-auto text-light" role="status">
