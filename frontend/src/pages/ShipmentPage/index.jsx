@@ -46,7 +46,18 @@ export default function ShipmentPage() {
 
   const handleSelectPlace = useCallback(
     (place, { target }) => {
-      setFormData({ ...formData, [target.name]: place });
+      const pl = { ...place };
+      if (pl.locationName === "Current Position") {
+        if (!navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition(({ coords }) => {
+          const { latitude, longitude } = coords;
+          pl.lat = latitude;
+          pl.lng = longitude;
+          setFormData({ ...formData, [target.name]: pl });
+        });
+      } else {
+        setFormData({ ...formData, [target.name]: pl });
+      }
     },
     [formData]
   );
