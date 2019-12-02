@@ -93,21 +93,21 @@ export default function LiveTrackingPage() {
             {locations.map(loc => (
               <Marker key={loc.createdAt} {...loc} color="blue" size={5} />
             ))}
-            <Marker {...latestLoc} color="green" size={8} />
-            <Marker
+            <Marker {...latestLoc} color="lightgreen" size={5} />
+            <StartDestMarker
               color="red"
-              size={10}
+              size={5}
               lat={shipment.startLat}
               lng={shipment.startLng}
             />
-            <Marker
+            <StartDestMarker
               color="red"
-              size={10}
+              size={5}
               lat={shipment.destinationLat}
               lng={shipment.destinationLng}
             />
             {shipment.checkpoints.map(cp => (
-              <Marker
+              <CheckpointMarker
                 key={cp.createdAt}
                 color="black"
                 size={5}
@@ -137,6 +137,32 @@ const Marker = styled.div`
   border-width: 2px;
   border-style: solid;
   border-radius: 100%;
+  transform: translate(-50%, -50%);
+`;
+
+const StartDestMarker = styled.div`
+  background: ${props => props.color};
+  padding: ${props => `${props.size * 1.5}px ${props.size}px`};
+  display: inline-flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  border-color: white;
+  border-width: 2px;
+  border-style: solid;
+  transform: translate(-50%, -50%);
+`;
+
+const CheckpointMarker = styled.div`
+  background: ${props => props.color};
+  padding: ${props => `${props.size}px`};
+  display: inline-flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  border-color: white;
+  border-width: 2px;
+  border-style: solid;
   transform: translate(-50%, -50%);
 `;
 

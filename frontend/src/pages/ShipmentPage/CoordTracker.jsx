@@ -5,9 +5,8 @@ import * as io from "../../modules/socket";
 
 const GEO_OPTIONS = {
   enableHighAccuracy: false,
-  timeout: 250,
-  maximumAge: 0,
-  distanceFilter: 5
+  timeout: 5000,
+  maximumAge: 0
 };
 
 const defaultLatestCoord = shippingCode => ({
@@ -25,7 +24,6 @@ export default function CoordTracker({
   destinationLng,
   onArrived
 }) {
-  const [watchId, setWatchId] = React.useState(null);
   const [isOnline, setIsOnline] = React.useState(() => io.socket.connected);
   const [latestCoord, setLatestCoord] = React.useState(
     defaultLatestCoord(shippingCode)
@@ -34,47 +32,46 @@ export default function CoordTracker({
   React.useEffect(() => {
     function handlePositionChange({ coords }) {
       const { latitude: lat, longitude: lng } = coords;
-      console.log(coords);
       // we only update the latest coordinate
       // when the old coordinate is different from the new one
       if (latestCoord.lat !== lat || latestCoord.lng !== lng) {
+        console.log(coords);
         setLatestCoord({ shippingCode, lat, lng });
         io.emitSendCoordinate(shippingCode, lat, lng);
       }
     }
 
+    let interval;
     // check for Geolocation support
     if (!navigator.geolocation) {
       alert("No Geolocation");
-    } else if (!watchId && shippingCode) {
+    } else if (shippingCode) {
       // socker event handler
       io.connect(shippingCode);
-      // watch for position change
-      const { geolocation } = navigator;
-      const id = geolocation.watchPosition(
-        handlePositionChange,
-        () => alert("Location needed to track the shipment"),
-        GEO_OPTIONS
-      );
-      // save the watch id so we can
-      // use it for clean up
-      setWatchId(id);
+      // the watch position is not work as expected
+      // the event handler isnt getting called, when the position change
+      // instead, we check every N milliseconds and check
+      // if the position move, then we emit the new change
+      interval = setInterval(() => {
+        navigator.geolocation.getCurrentPosition(
+          handlePositionChange,
+          () => alert("Location needed to track the shipment"),
+          GEO_OPTIONS
+        );
+      }, 1000);
     }
 
     // update socket status
     setIsOnline(io.socket.connected);
     return () => {
-      if (watchId !== null) {
-        // clean up
-        navigator.geolocation.clearWatch(watchId);
-        io.socket.removeListener(io.events.arrived);
-        io.leaveRoom(shippingCode);
+      if (interval) {
+        clearInterval(interval);
       }
+      io.socket.removeListener(io.events.arrived);
+      io.leaveRoom(shippingCode);
     };
   }, [
-    watchId,
     shippingCode,
-    setWatchId,
     setIsOnline,
     latestCoord,
     setLatestCoord,

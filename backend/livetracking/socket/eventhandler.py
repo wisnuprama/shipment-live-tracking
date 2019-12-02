@@ -114,6 +114,6 @@ def on_send_coordinate(data: dict):
 
     # check if the shipment is still new
     # then set as otw
-    if shipment.is_new():
+    if shipment.is_new:
         shipment.set_as_otw()
         shipment.save()
