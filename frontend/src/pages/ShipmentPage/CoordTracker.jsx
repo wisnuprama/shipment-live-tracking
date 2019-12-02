@@ -24,7 +24,6 @@ export default function CoordTracker({
   destinationLng,
   onArrived
 }) {
-  const [isOnline, setIsOnline] = React.useState(() => io.socket.connected);
   const [latestCoord, setLatestCoord] = React.useState(
     defaultLatestCoord(shippingCode)
   );
@@ -58,11 +57,9 @@ export default function CoordTracker({
           () => alert("Location needed to track the shipment"),
           GEO_OPTIONS
         );
-      }, 1000);
+      }, 2000);
     }
 
-    // update socket status
-    setIsOnline(io.socket.connected);
     return () => {
       if (interval) {
         clearInterval(interval);
@@ -72,7 +69,6 @@ export default function CoordTracker({
     };
   }, [
     shippingCode,
-    setIsOnline,
     latestCoord,
     setLatestCoord,
     destinationLat,
@@ -99,9 +95,9 @@ export default function CoordTracker({
   return (
     <Container
       className="d-flex align-items-center p-2 clearfix"
-      online={isOnline}
+      online={io.socket.connected}
     >
-      <strong>{isOnline ? "Online" : "Offline"}</strong>
+      <strong>{io.socket.connected ? "Online" : "Offline"}</strong>
       <div className="spinner-grow ml-auto text-light" role="status">
         <span className="sr-only">Loading...</span>
       </div>

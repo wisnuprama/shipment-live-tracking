@@ -16,7 +16,6 @@ export default function LiveTrackingPage() {
 
   const [shipment, setShipment] = useState(null);
   const [locations, setLocations] = useState(() => []);
-  const [isOnline, setIsOnline] = React.useState(() => io.socket.connected);
 
   function getLatestLocation() {
     // return the latest location
@@ -41,26 +40,28 @@ export default function LiveTrackingPage() {
 
   useEffect(() => {
     // check if there is a listener for the event
-    if (!io.socket.hasListeners(io.events.liveTracking)) {
-      // if not connect to the socket
-      io.connect(shippingCode);
-      // and then add the listener
-      io.addLiveTrackingListener(newLocation => {
-        // update the latest location
-        const newLocations = [...locations, newLocation];
-        setLocations(newLocations);
-      });
-    }
-
+    io.connect(shippingCode);
     // update socket status
-    setIsOnline(io.socket.connected);
+    return () => {
+      io.leaveRoom(shippingCode);
+      io.socket.disconnect();
+    };
+  }, [shippingCode]);
 
+  useEffect(() => {
+    // check if there is a listener for the event
+    const listener = newLocation => {
+      // update the latest location
+      console.log(newLocation);
+      const newLocations = [...locations, newLocation];
+      setLocations(newLocations);
+    };
+    io.addLiveTrackingListener(listener);
     return () => {
       // clean up by leave the room
-      io.socket.removeListener(io.events.liveTracking);
-      io.leaveRoom(shippingCode);
+      io.socket.removeListener(io.events.liveTracking, listener);
     };
-  }, [locations, setLocations, shippingCode]);
+  }, [locations, setLocations]);
 
   const latestLoc = getLatestLocation();
   return (
@@ -76,7 +77,9 @@ export default function LiveTrackingPage() {
       </nav>
 
       {/* show online / offline */}
-      <Toast online={isOnline}>{isOnline ? "Online" : "Offline"}</Toast>
+      <Toast online={io.socket.connected}>
+        {io.socket.connected ? "Online" : "Offline"}
+      </Toast>
 
       {/* show google maps only when the latestLoc and shipment have loaded
           else show spinner */}
@@ -88,7 +91,7 @@ export default function LiveTrackingPage() {
           <GoogleMapReact
             bootstrapURLKeys={{ key: config.GOOGLE_MAPS_API_KEY }}
             defaultCenter={{ lat: latestLoc.lat, lng: latestLoc.lng }}
-            defaultZoom={16}
+            defaultZoom={18}
           >
             {locations.map(loc => (
               <Marker key={loc.createdAt} {...loc} color="blue" size={5} />
@@ -133,9 +136,6 @@ const Marker = styled.div`
   text-align: center;
   align-items: center;
   justify-content: center;
-  border-color: white;
-  border-width: 2px;
-  border-style: solid;
   border-radius: 100%;
   transform: translate(-50%, -50%);
 `;
