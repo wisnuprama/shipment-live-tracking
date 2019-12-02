@@ -6,8 +6,8 @@ import Card from "../../components/Card";
 /**
  * Userflow 5
  */
-
 function ShipmentListPage() {
+  const [keyword, setKeyword] = useState("");
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -18,15 +18,31 @@ function ShipmentListPage() {
     fetchData();
   }, [setData]);
 
+  let shipments = data;
+  if (keyword) {
+    shipments = shipments.filter(s => s.shippingCode.includes(keyword));
+  }
+
   return (
-    <Container>
-      <Title>All Shipments</Title>
-      {data.map(shipment => {
+    <Container className="container">
+      <Header>
+        <h3>All Shipments</h3>
+        <input
+          className="form-control"
+          placeholder="Search shipping code..."
+          onChange={e => setKeyword(e.target.value)}
+        />
+      </Header>
+      {shipments.map(shipment => {
         return (
           <Card
             key={shipment.shippingCode}
             title={`SC${shipment.shippingCode}`}
-            description={`status: ${shipment.status} | ${shipment.startName} -> ${shipment.destinationName}`}
+            description={`status: ${shipment.status} | ${
+              shipment.startName
+            } -> ${shipment.destinationName} | ${new Date(
+              shipment.createdAt
+            ).toLocaleString()}`}
             next={`/shipments/${shipment.shippingCode}`}
           />
         );
@@ -37,16 +53,18 @@ function ShipmentListPage() {
 
 export default ShipmentListPage;
 
-const Title = styled.h3`
+const Header = styled.div`
   position: sticky;
   top: 0;
+  background-color: #ffffff;
+  width: 100%;
+  z-index: 1;
+  margin-bottom: 24px;
 `;
 
 const Container = styled.div`
   position: relative;
   top: 0;
-  width: 100%;
-  max-width: 425px;
   margin: 0 auto;
-  padding: 10px;
+  padding: 24px 0;
 `;

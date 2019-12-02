@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import * as io from "../../modules/socket";
+import * as mapsUtils from "../../modules/maps";
 
 const GEO_OPTIONS = {
   enableHighAccuracy: false,
@@ -33,7 +34,11 @@ export default function CoordTracker({
       const { latitude: lat, longitude: lng } = coords;
       // we only update the latest coordinate
       // when the old coordinate is different from the new one
-      if (latestCoord.lat !== lat || latestCoord.lng !== lng) {
+      if (
+        !latestCoord.lat ||
+        !latestCoord.lng ||
+        mapsUtils.isInRadius(latestCoord.lat, latestCoord.lng, lat, lng, 0.005)
+      ) {
         console.log(coords);
         setLatestCoord({ shippingCode, lat, lng });
         io.emitSendCoordinate(shippingCode, lat, lng);
