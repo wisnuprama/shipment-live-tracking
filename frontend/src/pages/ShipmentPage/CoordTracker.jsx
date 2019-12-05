@@ -92,7 +92,8 @@ export default function CoordTracker({
     latestCoord,
     setLatestCoord,
     destinationLat,
-    destinationLng
+    destinationLng,
+    bulkCoords
   ]);
 
   React.useEffect(() => {
