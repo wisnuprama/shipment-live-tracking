@@ -56,6 +56,7 @@ export default function LiveTrackingPage() {
         console.log("Receive new locations", newLocations);
       }
       setLocations([...locations, ...newLocations]);
+      console.log("Updated")
     };
     io.addLiveTrackingListener(listener);
     return () => {
