@@ -28,6 +28,7 @@ export function connect(shippingCode, onConnect, onDisconnect) {
   if (onDisconnect) {
     socket.on(events.disconnect, onDisconnect);
   }
+  socket.connect()
 }
 
 export function leaveRoom(shippingCode) {
@@ -50,6 +51,14 @@ export function emitSendCoordinate(shippingCode, lat, lng, ...args) {
   socket.emit(
     events.sendCoord,
     utils.transformRequestData({ shippingCode, lat, lng }),
+    ...args
+  );
+}
+
+export function emitSendBulkCoordinate(bulkCoords, ...args) {
+  socket.emit(
+    events.sendCoord,
+    utils.transformRequestData(bulkCoords),
     ...args
   );
 }

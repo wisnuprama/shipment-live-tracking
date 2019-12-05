@@ -120,7 +120,7 @@ export default function LiveTrackingPage() {
             ))}
           </GoogleMapReact>
         ) : (
-          <div className="spinner-grow ml-auto text-light" role="status">
+          <div className="spinner-grow m-auto text-dark" role="status">
             <span className="sr-only">Loading...</span>
           </div>
         )}
