@@ -19,7 +19,7 @@ if IS_DEVELOPMENT:
         },
         'config': {
             'default_keyspace': 'livetracking',
-            'hosts': ['localhost', ],
+            'hosts': ['172.21.128.3', ],
             'retry_connect': True,
             'port': 9042
         }
