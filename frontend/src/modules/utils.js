@@ -14,14 +14,14 @@ export function camelToSnake(string) {
 
 export function transformData(data, fn) {
   const keys = Object.keys(data);
-  const newData = {};
+  const newData = Array.isArray(data) ? [] : {};
 
   keys.forEach(k => {
     let value = data[k];
     if (Array.isArray(value)) {
       value = value.map(v => transformData(v, fn));
-    } else if (typeof k === "object") {
-      value = transformData(k, fn);
+    } else if (typeof value === "object") {
+      value = transformData(value, fn);
     }
     newData[fn(k)] = value;
   });

@@ -22,7 +22,7 @@ def send_latest_location(shipping_code):
 
     # tell the client
     emit(constants.K_EVENT_LIVE_TRACKING,
-         latest_location.to_dict(),
+         [latest_location.to_dict()],
          room=shipping_code)
 
 
@@ -45,6 +45,9 @@ def handle_join(data: dict):
     """
     # check if the shipping code is a valid one
     shipping_code = data.get('shipping_code', None)
+    print("HAHA", shipping_code)
+    if shipping_code is None:
+        return False
     valid = validate_shipping_code(shipping_code)
     if not valid:
         return False
@@ -87,14 +90,8 @@ def check_has_arrived(shipment: Shipment, new_location: LocationLog) -> bool:
         emit(constants.K_EVENT_ARRIVED, shipment.to_dict())
 
 
-@socketio.on(constants.K_EVENT_SEND_COORDINATE)
-def on_send_coordinate(data: dict):
-    """
-    Client (the goods) will tell us its new coordinate
-    when they move around.
-    """
-    # check if the shipping code is a valid one
-    shipping_code = data.get('shipping_code', None)
+def create_coordinate(coord):
+    shipping_code = coord.get('shipping_code', None)
     valid = validate_shipping_code(shipping_code)
     if not valid:
         return False
@@ -102,18 +99,39 @@ def on_send_coordinate(data: dict):
     shipment: Shipment = Shipment.get(shipping_code=shipping_code)
 
     # create new LocationLog
-    new_location: LocationLog = LocationLog.create(**data)
+    new_location: LocationLog = LocationLog.create(**coord)
     shipping_code = str(new_location.shipping_code)
-    # emit the new location to client
-    emit(constants.K_EVENT_LIVE_TRACKING,
-         new_location.to_dict(),
-         room=shipping_code)
 
     # check if has arrived
     check_has_arrived(shipment, new_location)
 
+    return new_location
+
+
+@socketio.on(constants.K_EVENT_SEND_COORDINATE)
+def on_send_coordinate(data):
+    """
+    Client (the goods) will tell us its new coordinate
+    when they move around.
+    """
+    # check if the shipping code is a valid one
+    print(data)
+    if type(data) == list and len(data) > 0:
+        # we simply assume that the latest location
+        # is the last created coord
+        new_locations = []
+        for coord in data:
+            new_locations.append(create_coordinate(coord))
+        new_location: LocationLog = new_locations[len(data) - 1]
+        emit(constants.K_EVENT_LIVE_TRACKING,
+             list(map(lambda l: l.to_dict(), new_locations)),
+             room=str(new_location.shipping_code))
+    else:
+        return False
+
     # check if the shipment is still new
     # then set as otw
+    shipment = Shipment.get(new_location.shipping_code)
     if shipment.is_new:
         shipment.set_as_otw()
         shipment.save()

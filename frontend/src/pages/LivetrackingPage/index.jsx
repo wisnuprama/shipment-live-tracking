@@ -50,11 +50,12 @@ export default function LiveTrackingPage() {
 
   useEffect(() => {
     // check if there is a listener for the event
-    const listener = newLocation => {
+    const listener = newLocations => {
       // update the latest location
-      console.log(newLocation);
-      const newLocations = [...locations, newLocation];
-      setLocations(newLocations);
+      if (config.IS_DEVELOPMENT) {
+        console.log("Receive new locations", newLocations);
+      }
+      setLocations([...locations, ...newLocations]);
     };
     io.addLiveTrackingListener(listener);
     return () => {
@@ -93,9 +94,13 @@ export default function LiveTrackingPage() {
             defaultCenter={{ lat: latestLoc.lat, lng: latestLoc.lng }}
             defaultZoom={18}
           >
-            {locations.map(loc => (
-              <Marker key={loc.createdAt} {...loc} color="blue" size={5} />
-            ))}
+            {locations.map(
+              loc =>
+                loc.lat &&
+                loc.lng && (
+                  <Marker key={loc.createdAt} {...loc} color="blue" size={5} />
+                )
+            )}
             <Marker {...latestLoc} color="lightgreen" size={5} />
             <StartDestMarker
               color="red"

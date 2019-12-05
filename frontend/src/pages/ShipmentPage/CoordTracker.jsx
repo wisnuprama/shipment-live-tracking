@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
+import * as config from "../../config";
 import * as io from "../../modules/socket";
 import * as mapsUtils from "../../modules/maps";
 
@@ -29,6 +30,8 @@ export default function CoordTracker({
     defaultLatestCoord(shippingCode)
   );
 
+  const bulkCoords = React.useMemo(() => [], []);
+
   React.useEffect(() => {
     function handlePositionChange({ coords }) {
       const { latitude: lat, longitude: lng } = coords;
@@ -37,11 +40,23 @@ export default function CoordTracker({
       if (
         !latestCoord.lat ||
         !latestCoord.lng ||
-        mapsUtils.isInRadius(latestCoord.lat, latestCoord.lng, lat, lng, 0.005)
+        !mapsUtils.isInRadius(latestCoord.lat, latestCoord.lng, lat, lng, 0.005)
       ) {
-        console.log(coords);
-        setLatestCoord({ shippingCode, lat, lng });
-        io.emitSendCoordinate(shippingCode, lat, lng);
+        const data = { shippingCode, lat, lng };
+        bulkCoords.push(data);
+        setLatestCoord(data);
+      }
+
+      if (config.IS_DEVELOPMENT) {
+        console.log(bulkCoords);
+      }
+
+      // send every 5 new coordinates
+      // to ease frontend processing many coordinates
+      if (bulkCoords.length === 5) {
+        io.emitSendBulkCoordinate([...bulkCoords]);
+        // clear array
+        bulkCoords.length = 0;
       }
     }
 

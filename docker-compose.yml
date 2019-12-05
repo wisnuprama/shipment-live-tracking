@@ -42,25 +42,25 @@ services:
             - CASSANDRA_SEEDS=DC1N1
 
     # APP
-    backend:
-        build:
-            context: ./backend
-            dockerfile: ./Dockerfile
-        volumes:
-            - ./backend:/app
-        networks:
-            dc1ring:
-                ipv4_address: '172.21.127.1'
-        ports:
-            - 5000:5000
-        depends_on:
-            - DC1N1
-        restart: unless-stopped
-        environment:
-            - FLASK_ENV=development
-            - FLASK_APP=app.py
-            - FLASK_DEBUG=1
-            - CQLENG_ALLOW_SCHEMA_MANAGEMENT=true
+    # backend:
+    #     build:
+    #         context: ./backend
+    #         dockerfile: ./Dockerfile
+    #     volumes:
+    #         - ./backend:/app
+    #     networks:
+    #         dc1ring:
+    #             ipv4_address: '172.21.127.1'
+    #     ports:
+    #         - 5000:5000
+    #     depends_on:
+    #         - DC1N1
+    #     restart: unless-stopped
+    #     environment:
+    #         - FLASK_ENV=development
+    #         - FLASK_APP=app.py
+    #         - FLASK_DEBUG=1
+    #         - CQLENG_ALLOW_SCHEMA_MANAGEMENT=true
 
     frontend:
         build:
@@ -71,8 +71,8 @@ services:
             - '/app/node_modules'
         ports:
             - '3000:3000'
-        depends_on:
-            - backend
+        # depends_on:
+            # - backend
         restart: unless-stopped
         environment:
             - NODE_ENV=development
